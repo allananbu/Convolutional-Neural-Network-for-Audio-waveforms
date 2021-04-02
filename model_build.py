@@ -28,6 +28,9 @@ X_test=np.load('X_test.npy')
 Y_train=np.load('Y_train.npy')
 Y_test=np.load('Y_test.npy')
 
+X_train=X_train.reshape([96,32,1,3576])
+X_test=X_test.reshape([96,32,1,894])
+
 classes=['on','off']
 no_class=len(classes)
 
@@ -35,27 +38,28 @@ no_filter=32
 pool_size=(2,2)
 kernel_size=(3,3)
 no_layers=3
-input_shape=(1,X_train.shape[2],X_train.shape[3])
+input_shape=(X_train.shape[0],X_train.shape[1],1)
     
 model = Sequential()
-model.add(Conv2D(31, (2, 2), input_shape=input_shape,data_format='channels_first'))
+model.add(Conv2D(8, 3, input_shape=input_shape))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(1,1)))
   
-#model.add(Conv2D(32, (2, 2)))
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-  
-model.add(Conv2D(64, (2, 2)))
+model.add(Conv2D(16, 3))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(1,1)))
+  
+model.add(Conv2D(32, 3))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(1,1)))
   
 model.add(Flatten())
-model.add(Dense(64))
+model.add(Dropout(0.2))
+model.add(Dense(16))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(0.2))
 model.add(Dense(2))
-model.add(Activation('sigmoid'))
+model.add(Activation('softmax'))
 
 
 model.compile(loss='categorical_crossentropy',
@@ -79,7 +83,7 @@ model.summary()
     
     #train and score model
 batch_size=128
-no_epoch=100
+no_epoch=30
 model.fit(X_train,Y_train,batch_size=batch_size,epochs=no_epoch,verbose=1,
           validation_data=(X_test,Y_test))
 score=model.evaluate(X_test,Y_test,verbose=0)

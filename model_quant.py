@@ -54,7 +54,7 @@ tflite_model = converter.convert()
 #tf_model_file=tf_model_dir/"Audio_recog_quant.tflite"
 #tf_model_file.write_bytes(tflite_model)
 
-tflite_model_files = pathlib.Path('Audio_recog_quant.tflite')
+tflite_model_files = pathlib.Path('Audio_reco_quant.tflite')
 tflite_model_files.write_bytes(tflite_model)
 
 interpreter = tf.lite.Interpreter(model_path=str(tflite_model_files))

@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import librosa
 import librosa.display
+import tensorflow as tf
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.models import Model
@@ -27,9 +28,17 @@ X_train=np.load('X_train.npy')
 X_test=np.load('X_test.npy')
 Y_train=np.load('Y_train.npy')
 Y_test=np.load('Y_test.npy')
+def NormalizeData(data):
+    return (data - np.min(data)) / (np.max(data) - np.min(data))
+X_train=NormalizeData(X_train)
+X_test=NormalizeData(X_test)
+#X_train=X_train.reshape([96,32,1])
+#X_test=X_test.reshape([96,32,1])
+X_train=X_train.reshape([3576,96,32,1])
+X_test=X_test.reshape([894,96,32,1])
 
-X_train=X_train.reshape([96,32,1,3576])
-X_test=X_test.reshape([96,32,1,894])
+#X_train=tf.convert_to_tensor(X_train)
+#X_test=tf.convert_to_tensor(X_test)
 
 classes=['on','off']
 no_class=len(classes)
@@ -38,18 +47,18 @@ no_filter=32
 pool_size=(2,2)
 kernel_size=(3,3)
 no_layers=3
-input_shape=(X_train.shape[0],X_train.shape[1],1)
+input_shape=(1,X_train.shape[1],X_train.shape[2])
     
 model = Sequential()
-model.add(Conv2D(8, 3, input_shape=input_shape))
+model.add(Conv2D(30, 3, input_shape=input_shape,data_format='channels_first'))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(1,1)))
   
-model.add(Conv2D(16, 3))
+model.add(Conv2D(64, 3))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(1,1)))
   
-model.add(Conv2D(32, 3))
+model.add(Conv2D(128, 3))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(1,1)))
   

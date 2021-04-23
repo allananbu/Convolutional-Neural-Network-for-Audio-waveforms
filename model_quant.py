@@ -33,7 +33,7 @@ def representative_data_gen():
     # Model has only one input so each data point has one element.
     yield [input_value]
 
-model=tf.keras.models.load_model('Audio_recog.h5')
+model=tf.keras.models.load_model('audio_recog_old_arch.h5')
 
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
@@ -54,7 +54,7 @@ tflite_model = converter.convert()
 #tf_model_file=tf_model_dir/"Audio_recog_quant.tflite"
 #tf_model_file.write_bytes(tflite_model)
 
-tflite_model_files = pathlib.Path('Audio_reco_quant.tflite')
+tflite_model_files = pathlib.Path('audio_recog_old_arch_quant.tflite')
 tflite_model_files.write_bytes(tflite_model)
 
 interpreter = tf.lite.Interpreter(model_path=str(tflite_model_files))

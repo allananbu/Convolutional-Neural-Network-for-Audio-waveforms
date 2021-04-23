@@ -30,11 +30,12 @@ Y_test=np.load('Y_test.npy')
 train_data=tf.cast(X_train,tf.float32)
 val_data=tf.cast(X_test,tf.float32)
 
+
 ##store no of images in train & validation 
 
 
-shape_1=99
-shape_2=81
+shape_1=32
+shape_2=39
 
 #Create CNN model
 
@@ -47,7 +48,7 @@ model.add(Conv2D(16,(3,3),padding='same', input_shape=(shape_1,shape_2,1)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2), strides=2))
 
-model.add(Conv2D(32,(3,3),padding='same', input_shape=(shape_1,shape_2,1)))
+model.add(Conv2D(24,(3,3),padding='same', input_shape=(shape_1,shape_2,1)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2), strides=2))
 
@@ -65,7 +66,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 #fit for train data
-hist=model.fit(train_data,Y_train,batch_size=250,epochs=15,validation_data=(val_data,Y_test))
+hist=model.fit(train_data,Y_train,batch_size=250,epochs=30,validation_data=(val_data,Y_test))
 score=model.evaluate(val_data,Y_test)
 print('Test accuracy',score[1])
 model.summary()
@@ -81,4 +82,4 @@ plt.legend(['Train','Val'],loc='upper left')
 plt.show()
 
 
-model.save('audio_recog.h5')
+model.save('audio_recog_old_arch.h5')

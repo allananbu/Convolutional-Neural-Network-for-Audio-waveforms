@@ -15,7 +15,7 @@ import re
 from scipy.fftpack import fft
 from scipy.io import wavfile
 from scipy import signal
-from scipy.io import wavfile
+
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -81,6 +81,8 @@ def preprocess_data(inpath='Data/',outpath='Processed/'):
     nb_classes = len(classes)
     y_data=[]
     x_data=[]
+    data=[]
+    data_label=[]
     for idx,cl in enumerate(classes):
         
         this_Y=np.array(one_hot_encode(cl,classes))
@@ -98,6 +100,8 @@ def preprocess_data(inpath='Data/',outpath='Processed/'):
                 n_samples=[samples]
             for samples in n_samples:
                 resampled=signal.resample(samples,int(new_sample_rate/sample_rate*samples.shape[0]))
+                data.append(resampled)
+                data_label.append(idx)
                 _,_,specgram=log_specgram(resampled,sample_rate=new_sample_rate)
                 y_data.append(idx)
                 x_data.append(specgram)
@@ -105,7 +109,7 @@ def preprocess_data(inpath='Data/',outpath='Processed/'):
     x_data=np.array(x_data)
     x_data=x_data.reshape(tuple(list(x_data.shape)+[1]))
     y_data=np.array(y_data)
-    return x_data,y_data
+    return x_data,y_data,data,data_label
 #    y_train=
 
 #            aud,sr=librosa.load(audio_path,sr=None)
@@ -119,8 +123,8 @@ if __name__ == '__main__':
     new_sample_rate = 8000
     global x_train
     global y_train
-    x_data,y_data=preprocess_data()
-    #x_data,y_data=shuffle_data(x_data,y_data)
+    x_data,y_data,data_resample,data_label=preprocess_data()
+    x_data,y_data=shuffle_data(x_data,y_data)
 #    x_data.resize([x_data.shape[1],x_data.shape[2],1,x_data.shape[0]])
 #    y_data.resize([y_data.shape[1],y_data.shape[2],y_data.shape[0]])
     
